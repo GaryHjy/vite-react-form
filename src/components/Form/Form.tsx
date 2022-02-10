@@ -7,7 +7,11 @@ import type { Store } from './interface'
 
 
 interface FormProps<Values = any> {
+  /** 当前表单name */
+  name?: string;
+  /** 初始值 */
   initialValues?: Store;
+  /** 触发校验的事件集合 */
   validateTrigger?: string | string[] | false;
   onFinish?: (values: Values) => void;
   onFinishFailed?: (errorInfo: any) => void;

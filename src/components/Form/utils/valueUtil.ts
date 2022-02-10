@@ -6,7 +6,7 @@ import type { EventArgs, StoreValue } from "../interface";
  * @param obj 
  * @returns boolean
  */
-function isObject(obj: StoreValue) {
+export function isObject(obj: StoreValue) {
   return typeof obj === 'object' && obj !== null && Object.getPrototypeOf(obj) === Object.prototype;
 }
 

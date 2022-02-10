@@ -1,6 +1,10 @@
-import type { Callbacks, Store } from "../interface";
+import * as React from 'react';
+import type { Callbacks, FormInstance, InternalHooks, Store } from "../interface";
+
+export const HOOK_MARK = 'INTERNAL_HOOKS';
 
 class FormStore {
+  private formHooked: boolean = false;
 
   /** 更新表单组件方法 */
   private forceRootUpdate: () => void;
@@ -20,9 +24,45 @@ class FormStore {
   }
 
   /** 获取表单方法 */
-  public getForm = () => {
+  public getForm = () => ({
+    getFieldValue: this.getFieldValue,
+    getFieldsValue: this.getFieldsValue,
+    // getFieldError: this.getFieldError,
+    // getFieldWarning: this.getFieldWarning,
+    // getFieldsError: this.getFieldsError,
+    // isFieldsTouched: this.isFieldsTouched,
+    // isFieldTouched: this.isFieldTouched,
+    // isFieldValidating: this.isFieldValidating,
+    // isFieldsValidating: this.isFieldsValidating,
+    resetFields: this.resetFields,
+    setFields: this.setFields,
+    setFieldsValue: this.setFieldsValue,
+    // validateFields: this.validateFields,
+    submit: this.submit,
 
-  }
+    getInternalHooks: this.getInternalHooks,
+  })
+
+  private getInternalHooks = (key: string): InternalHooks | null => {
+    if (key === HOOK_MARK) {
+      this.formHooked = true;
+
+      return {
+        // dispatch: this.dispatch,
+        // initEntityValue: this.initEntityValue,
+        // registerField: this.registerField,
+        // useSubscribe: this.useSubscribe,
+        setInitialValues: this.setInitialValues,
+        setCallbacks: this.setCallbacks,
+        // setValidateMessages: this.setValidateMessages,
+        // getFields: this.getFields,
+        // setPreserve: this.setPreserve,
+        // getInitialValue: this.getInitialValue,
+      };
+    }
+
+    return null;
+  };
 
   /** 设置初始值 */ 
   private setInitialValues = (initialValues: Store, init: boolean) => {
@@ -70,9 +110,26 @@ class FormStore {
   }
 }
 
-const useForm = () => {
+function useForm<Values = any>(form?: FormInstance<Values>): [FormInstance<Values>] {
+  const formRef = React.useRef<FormInstance>();
+  const [, forceUpdate] = React.useState({});
 
-  return []
+  if (!formRef.current) {
+    if (form) {
+      formRef.current = form;
+    } else {
+      // Create a new FormStore if not provided
+      const forceReRender = () => {
+        forceUpdate({});
+      };
+
+      const formStore: FormStore = new FormStore(forceReRender);
+
+      formRef.current = formStore.getForm();
+    }
+  }
+
+  return [formRef.current];
 }
 
-export default useForm
+export default useForm;

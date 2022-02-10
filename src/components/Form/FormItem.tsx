@@ -15,6 +15,7 @@ interface FormItemProps<Values = any> {
   trigger?: string;
   validateTrigger?: string | string[] | false;
   valuePropName?: string;
+  /** 自定义获取值 */
   getValueFromEvent?: (...args: EventArgs) => StoreValue;
 }
 
@@ -38,7 +39,8 @@ function FormItem<Values = any>(props: FormItemProps<Values>): React.ReactElemen
     children, 
     valuePropName = 'value', 
     trigger = 'onChange', 
-    validateTrigger
+    validateTrigger,
+    getValueFromEvent
   } = props
 
   const formContext = useContext<InternalFormInstance>(FormContext)
@@ -48,7 +50,7 @@ function FormItem<Values = any>(props: FormItemProps<Values>): React.ReactElemen
     const mergedValidateTrigger =
       validateTrigger !== undefined ? validateTrigger : formContext.validateTrigger;
 
-    // 原触发方法
+    // 原触发收集value的方法
     const originTriggerFunc = childProps?.[trigger]
 
     const control = {
@@ -58,9 +60,14 @@ function FormItem<Values = any>(props: FormItemProps<Values>): React.ReactElemen
     // 添加指定获取值的事件
     control[trigger] = (...args: EventArgs) => {
 
-      const value = defaultGetValueFromEvent(valuePropName, ...args);
+      let newValue: StoreValue;
+      if (getValueFromEvent) {
+        newValue = getValueFromEvent(...args);
+      } else {
+        newValue = defaultGetValueFromEvent(valuePropName, ...args);
+      }
 
-      console.log(value);
+      console.log(newValue);
       // dispatch操作更新value值
 
       if (originTriggerFunc) {
