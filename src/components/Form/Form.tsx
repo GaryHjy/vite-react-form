@@ -1,4 +1,4 @@
-import { useImperativeHandle } from 'react'
+import { useMemo, useImperativeHandle } from 'react'
 
 import FormContext from './context/FormContext'
 
@@ -8,6 +8,7 @@ import type { Store } from './interface'
 
 interface FormProps<Values = any> {
   initialValues?: Store;
+  validateTrigger?: string | string[] | false;
   onFinish?: (values: Values) => void;
   onFinishFailed?: (errorInfo: any) => void;
 }
@@ -19,6 +20,7 @@ const Form: ForwardRefRenderFunction<FormInstance, FormProps> = (
     initialValues,
     onFinish,
     onFinishFailed,
+    validateTrigger = 'onChange',
     children
   }, ref) => {
   const formInstance: any = {}
@@ -27,8 +29,14 @@ const Form: ForwardRefRenderFunction<FormInstance, FormProps> = (
 
   let childrenNode = children
 
+  /** 表单 */
+  const formContextValue = useMemo(() => ({
+    validateTrigger,
+    
+  }), [validateTrigger])
+
   const wrapperNode = (
-    <FormContext.Provider value={{a: 123}}>
+    <FormContext.Provider value={formContextValue}>
       { childrenNode }
     </FormContext.Provider>
   )

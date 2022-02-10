@@ -1,5 +1,5 @@
 import { Input, Button } from 'antd'
-// import Form from '@/components/Form'
+import Form from '@/components/Form'
 
 
 function App() {
@@ -7,11 +7,14 @@ function App() {
     <div className="App">
       <Button type='primary'>按钮</Button>
 
-      {/* <Form>
+      <Form>
         <Form.Item>
           <Input />
         </Form.Item>
-      </Form> */}
+        <Form.Item>
+          <Input />
+        </Form.Item>
+      </Form>
     </div>
   )
 }
