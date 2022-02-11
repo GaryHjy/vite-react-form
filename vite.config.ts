@@ -7,23 +7,23 @@ import vitePluginImp from 'vite-plugin-imp'
 export default defineConfig({
   plugins: [
     react(),
-    vitePluginImp({
-      libList: [
-        {
-          libName: "antd",
-          style: (name) => `antd/lib/${name}/style/index.less`,
-        },
-      ],
-    })
+    // vitePluginImp({
+    //   libList: [
+    //     {
+    //       libName: "antd",
+    //       style: (name) => `antd/lib/${name}/style/index.less`,
+    //     },
+    //   ],
+    // })
   ],
-  css: {
-    preprocessorOptions: {
-      less: {
-        // 支持内联 JavaScript
-        javascriptEnabled: true,
-      }
-    }
-  },
+  // css: {
+  //   preprocessorOptions: {
+  //     less: {
+  //       // 支持内联 JavaScript
+  //       javascriptEnabled: true,
+  //     }
+  //   }
+  // },
   resolve: {
     alias: {
       '~': path.resolve(__dirname, './'), // 根路径
