@@ -1,7 +1,27 @@
+
 import * as React from 'react';
-import type { Callbacks, FormInstance, InternalHooks, Store } from "../interface";
+import type { 
+  Callbacks,
+  FormInstance,
+  InternalHooks,
+  InternalNamePath,
+  NamePath,
+  Store,
+  StoreValue
+} from "../interface";
+
+import { setValues } from '../utils/valueUtil'
 
 export const HOOK_MARK = 'INTERNAL_HOOKS';
+
+/** 更新操作action */
+interface UpdateAction {
+  type: 'updateValue';
+  namePath: InternalNamePath;
+  value: StoreValue;
+}
+
+export type ReducerAction = UpdateAction;
 
 class FormStore {
   private formHooked: boolean = false;
@@ -48,9 +68,9 @@ class FormStore {
       this.formHooked = true;
 
       return {
-        // dispatch: this.dispatch,
+        dispatch: this.dispatch,
         // initEntityValue: this.initEntityValue,
-        // registerField: this.registerField,
+        registerField: this.registerField,
         // useSubscribe: this.useSubscribe,
         setInitialValues: this.setInitialValues,
         setCallbacks: this.setCallbacks,
@@ -64,14 +84,62 @@ class FormStore {
     return null;
   };
 
+  private registerField = (entity: any) => {
+
+    // unRegisterField
+    return () => {
+
+    }
+  }
+
   /** 设置初始值 */ 
   private setInitialValues = (initialValues: Store, init: boolean) => {
-    
+    this.initialValues = initialValues || {};
+    if (init) {
+      this.store = setValues({}, initialValues, this.store);
+    }
   }
 
   /** 设置回调 */
   private setCallbacks = (callbacks: Callbacks) => {
     this.callbacks = callbacks;
+  };
+
+  /** 调度操作 */
+  private dispatch = (action: ReducerAction) => {
+    switch (action.type) {
+      case 'updateValue': {
+        const { namePath, value } = action;
+        this.updateValue(namePath, value);
+        break;
+      }
+      default:
+    }
+  };
+
+  /** 更新值 */
+  private updateValue = (name: NamePath, value: StoreValue) => {
+    // const namePath = getNamePath(name);
+    // const prevStore = this.store;
+    // this.store = setValue(this.store, namePath, value);
+
+    // this.notifyObservers(prevStore, [namePath], {
+    //   type: 'valueUpdate',
+    //   source: 'internal',
+    // });
+
+    // // Dependencies update
+    // const childrenFields = this.triggerDependenciesUpdate(prevStore, namePath);
+
+    // // trigger callback function
+    // const { onValuesChange } = this.callbacks;
+
+    // if (onValuesChange) {
+    //   const changedValues = cloneByNamePathList(this.store, [namePath]);
+    //   onValuesChange(changedValues, this.getFieldsValue());
+    // }
+
+    // this.triggerOnFieldsChange([namePath, ...childrenFields]);
   };
 
   /** 重置操作 */
