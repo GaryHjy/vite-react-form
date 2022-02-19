@@ -1,6 +1,5 @@
-import { Input, Button } from 'antd'
+import { Input, Button, Select } from 'antd'
 import Form from '@/components/Form'
-
 
 function App() {
   return (
@@ -9,10 +8,27 @@ function App() {
 
       <Form>
         <Form.Item>
-          <Input />
+          <Input.Group>
+            <Input.Search
+              addonBefore={(
+                <Select
+                  defaultValue="Zhejiang"
+                  style={{ width: '120px' }}  
+                >
+                  <Select.Option value="Zhejiang">Zhejiang</Select.Option>
+                  <Select.Option value="Jiangsu">Jiangsu</Select.Option>
+                </Select>
+              )}
+              allowClear
+              style={{ width: '370px' }}
+            />
+          </Input.Group>
         </Form.Item>
         <Form.Item>
-          <Input />
+          <Input.Search
+            style={{ width: '330px' }}
+            allowClear
+          />
         </Form.Item>
       </Form>
     </div>

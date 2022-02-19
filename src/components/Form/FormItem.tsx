@@ -1,16 +1,19 @@
-import React, { Component, useContext, cloneElement } from "react";
+import React, { useEffect, useContext, cloneElement } from "react";
 
 import FormContext from './context/FormContext'
 
 import { defaultGetValueFromEvent } from "./utils/valueUtil";
 
-import type { EventArgs, FormInstance, InternalFormInstance, StoreValue } from "./interface";
+import type { EventArgs, FormInstance, InternalFormInstance, NamePath, StoreValue } from "./interface";
+import { HOOK_MARK } from "./hooks/useForm";
 
 type RenderChildren<Values = any> = (form: FormInstance<Values>) => React.ReactNode;
 type ChildrenType<Values = any> = RenderChildren<Values> | React.ReactNode;
 
 interface FormItemProps<Values = any> {
   children?: ChildrenType<Values>;
+  /** 指定name值，用于收集value */
+  name?: NamePath;
   /** 当前触发方法 */
   trigger?: string;
   validateTrigger?: string | string[] | false;
@@ -18,16 +21,6 @@ interface FormItemProps<Values = any> {
   /** 自定义获取值 */
   getValueFromEvent?: (...args: EventArgs) => StoreValue;
 }
-
-
-// class FormItem extends Component {
-//   render() {
-//     console.log(this)
-//     return (<div>
-//       { this.props.children }
-//     </div>)
-//   }
-// }
 
 interface ChildProps {
   [name: string]: any;
@@ -40,10 +33,16 @@ function FormItem<Values = any>(props: FormItemProps<Values>): React.ReactElemen
     valuePropName = 'value', 
     trigger = 'onChange', 
     validateTrigger,
-    getValueFromEvent
+    getValueFromEvent,
+    name
   } = props
 
+  useEffect(() => {
+    console.log(name)
+  }, [name])
+
   const formContext = useContext<InternalFormInstance>(FormContext)
+  const { dispatch } = formContext.getInternalHooks(HOOK_MARK)!;
   const isRenderProps = typeof children === 'function';
   
   const getControlled = (childProps: ChildProps = {}) => {
@@ -67,8 +66,11 @@ function FormItem<Values = any>(props: FormItemProps<Values>): React.ReactElemen
         newValue = defaultGetValueFromEvent(valuePropName, ...args);
       }
 
-      console.log(newValue);
-      // dispatch操作更新value值
+      dispatch({
+        type: 'updateValue',
+        namePath: ['123'],
+        value: newValue,
+      });
 
       if (originTriggerFunc) {
         originTriggerFunc(...args)
