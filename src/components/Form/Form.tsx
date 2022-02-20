@@ -17,8 +17,6 @@ export interface FormProps<Values = any> extends BaseFormProps {
   form?: FormInstance<Values>;
   /** 初始值 */
   initialValues?: Store;
-  /** 触发校验的事件集合 */
-  validateTrigger?: string | string[] | false;
   onValuesChange?: Callbacks<Values>['onValuesChange'];
   children?: RenderProps | React.ReactNode;
   onFinish?: (values: Values) => void;
@@ -31,7 +29,6 @@ const Form: ForwardRefRenderFunction<FormInstance, FormProps> = (
     onFinish,
     onFinishFailed,
     form,
-    validateTrigger = 'onChange',
     children,
     onValuesChange,
     ...restProps
@@ -63,8 +60,7 @@ const Form: ForwardRefRenderFunction<FormInstance, FormProps> = (
   /** 表单 */
   const formContextValue = useMemo(() => ({
     ...(formInstance as InternalFormInstance),
-    validateTrigger,
-  }), [formInstance, validateTrigger])
+  }), [formInstance])
 
   const wrapperNode = (
     <FormContext.Provider value={formContextValue}>

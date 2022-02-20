@@ -7,7 +7,7 @@ function App() {
       <Button type='primary'>按钮</Button>
 
       <Form>
-        <Form.Item>
+        <Form.Item name="keyValue">
           <Input.Group>
             <Input.Search
               addonBefore={(
@@ -24,7 +24,7 @@ function App() {
             />
           </Input.Group>
         </Form.Item>
-        <Form.Item>
+        <Form.Item name="searchKey">
           <Input.Search
             style={{ width: '330px' }}
             allowClear

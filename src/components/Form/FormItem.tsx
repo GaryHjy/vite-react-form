@@ -14,9 +14,8 @@ interface FormItemProps<Values = any> {
   children?: ChildrenType<Values>;
   /** 指定name值，用于收集value */
   name?: NamePath;
-  /** 当前触发方法 */
+  /** 当前触发收集value的方法 */
   trigger?: string;
-  validateTrigger?: string | string[] | false;
   valuePropName?: string;
   /** 自定义获取值 */
   getValueFromEvent?: (...args: EventArgs) => StoreValue;
@@ -32,7 +31,6 @@ function FormItem<Values = any>(props: FormItemProps<Values>): React.ReactElemen
     children, 
     valuePropName = 'value', 
     trigger = 'onChange', 
-    validateTrigger,
     getValueFromEvent,
     name
   } = props
@@ -46,8 +44,6 @@ function FormItem<Values = any>(props: FormItemProps<Values>): React.ReactElemen
   const isRenderProps = typeof children === 'function';
   
   const getControlled = (childProps: ChildProps = {}) => {
-    const mergedValidateTrigger =
-      validateTrigger !== undefined ? validateTrigger : formContext.validateTrigger;
 
     // 原触发收集value的方法
     const originTriggerFunc = childProps?.[trigger]
@@ -66,12 +62,15 @@ function FormItem<Values = any>(props: FormItemProps<Values>): React.ReactElemen
         newValue = defaultGetValueFromEvent(valuePropName, ...args);
       }
 
+      console.log(name, newValue)
+
       dispatch({
         type: 'updateValue',
         namePath: ['123'],
         value: newValue,
       });
 
+      // 触发当前事件
       if (originTriggerFunc) {
         originTriggerFunc(...args)
       }
@@ -80,9 +79,8 @@ function FormItem<Values = any>(props: FormItemProps<Values>): React.ReactElemen
     return control
   }
   
+  // 克隆当前child 进行赋值
   const child = cloneElement(children as React.ReactElement, getControlled((children as React.ReactElement).props))
-
-  console.log(props)
 
   return <div>
     { child }
